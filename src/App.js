@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useEffect, useReducer, useRef } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, json, Route, Routes } from "react-router-dom";
 
 import Home from "./pages/Home";
 import New from "./pages/New";
@@ -40,6 +40,17 @@ export const DiaryDispatchContext = React.createContext();
 
 function App() {
   const [data, dispatch] = useReducer(reducer, []);
+
+  useEffect(() => {
+    const localData = localStorage.getItem("diary");
+    if (localData) {
+      const diaryList = JSON.parse(localData).sort(
+        (a, b) => parseInt(b.id) - parseInt(a.id)
+      );
+      dataId.current = diaryList[0].id + 1;
+      dispatch({ type: "INIT", data: diaryList });
+    }
+  }, []);
 
   const dataId = useRef(0);
 
